@@ -31,6 +31,7 @@ Button::Button()
 	framelineColor = 0;
 
 	ease = 0.0f;
+	saveClick = false;
 	buttonPressed = false;
 }
 
@@ -125,7 +126,7 @@ void Button::Render()
 		//	動きなし
 	case Button::EaseType::Static:
 		
-		if (buttonPressed)
+		if (onMouse)
 		{
 			DrawBox(pos.x - sizeHalf.x, pos.y - sizeHalf.y,
 				pos.x + sizeHalf.x, pos.y + sizeHalf.y,
@@ -147,8 +148,22 @@ void Button::Render()
 			buttonColor, true);
 		break;
 
-		//	外から中へ
-	case Button::EaseType::OutToCenter:
+		//	上から下
+	case Button::EaseType::UpToDown:
+		DrawBox(pos.x - sizeHalf.x, pos.y - sizeHalf.y,
+			pos.x + sizeHalf.x, (pos.y - sizeHalf.y) + size.y * Ease01(ease),
+			buttonColor, true);
+		break;
+
+		//	下から上
+	case Button::EaseType::DownToUp:
+		DrawBox(pos.x - sizeHalf.x, (pos.y + sizeHalf.y) - size.y * Ease01(ease),
+			pos.x + sizeHalf.x, pos.y + sizeHalf.y,
+			buttonColor, true);
+		break;
+
+		//	外から中へ（サイド）
+	case Button::EaseType::SideToCenter:
 		DrawBox(pos.x - sizeHalf.x, pos.y - sizeHalf.y,
 			(pos.x - sizeHalf.x) + sizeHalf.x * Ease01(ease), pos.y + sizeHalf.y,
 			buttonColor, true);
@@ -157,8 +172,8 @@ void Button::Render()
 			buttonColor, true);
 		break;
 
-		//	中から外へ
-	case Button::EaseType::CenterToOut:
+		//	中から外へ（サイド）
+	case Button::EaseType::CenterToSide:
 		DrawBox(pos.x - sizeHalf.x * Ease01(ease), pos.y - sizeHalf.y,
 			pos.x, pos.y + sizeHalf.y,
 			buttonColor, true);
@@ -166,6 +181,27 @@ void Button::Render()
 			pos.x + sizeHalf.x * Ease01(ease), pos.y + sizeHalf.y,
 			buttonColor, true);
 		break;
+
+		//	外から中へ（上下）
+	case Button::EaseType::UpAndDownToCenter:
+		DrawBox(pos.x - sizeHalf.x, pos.y - sizeHalf.y,
+			pos.x + sizeHalf.x, (pos.y - sizeHalf.y) + sizeHalf.y * Ease01(ease),
+			buttonColor, true);
+		DrawBox(pos.x - sizeHalf.x, (pos.y + sizeHalf.y) - sizeHalf.y * Ease01(ease),
+			pos.x + sizeHalf.x, pos.y + sizeHalf.y,
+			buttonColor, true);
+		break;
+		
+		//	中から外へ（上下）
+	case Button::EaseType::CenterToUpAndDown:
+		DrawBox(pos.x - sizeHalf.x, pos.y - sizeHalf.y * Ease01(ease),
+			pos.x + sizeHalf.x, pos.y,
+			buttonColor, true);
+		DrawBox(pos.x - sizeHalf.x, pos.y,
+			pos.x + sizeHalf.x, pos.y + sizeHalf.y * Ease01(ease),
+			buttonColor, true);
+		break;
+
 	default:
 		break;
 	}
@@ -186,8 +222,6 @@ void Button::Finalize()
 //	左クリックの取得
 bool Button::GetMouseLeftButton()
 {
-	static bool saveClick = false;
-
 	//	現在のクリック状態
 	bool nowClick = (GetMouseInput() & MOUSE_INPUT_LEFT);
 

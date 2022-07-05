@@ -19,8 +19,12 @@ public:
 		Static,
 		LeftToRight,
 		RightToLeft,
-		OutToCenter,
-		CenterToOut,
+		UpToDown,
+		DownToUp,
+		SideToCenter,
+		CenterToSide,
+		UpAndDownToCenter,
+		CenterToUpAndDown,
 	};
 
 private:
@@ -44,6 +48,7 @@ private:
 	float ease;
 
 	bool onMouse;
+	bool saveClick;
 	bool buttonPressed;
 
 public:
